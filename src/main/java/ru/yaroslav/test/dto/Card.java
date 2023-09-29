@@ -1,10 +1,7 @@
 package ru.yaroslav.test.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,18 +19,14 @@ public class Card implements Serializable {
     @Size(min = 16, max = 16)
     private String cardNumber;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Поле name не может быть пустым")
+    @NotNull(message = "необходимо передать значение name")
     @Size(min = 4, max = 4)
+    @Pattern(regexp = "^\\d+$", message = "pin должен состоять только из цифр")
     private String pin;
 
-    @NotBlank
-    @NotNull
-    @Size(min = 3, max = 36)
-    private String name;
-
     @Min(value = 10)
-    @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long money;
+    // @Pattern(regexp = "^\\d+$", message = "только положительные и цифры")
+    private Long amountOfMoney;
 }

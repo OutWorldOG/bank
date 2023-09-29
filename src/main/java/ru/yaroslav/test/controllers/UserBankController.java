@@ -18,13 +18,13 @@ public class UserBankController {
     }
 
     @PostMapping(value = "/account", consumes = "application/json")
-    public Card createBankAccount(@Valid @RequestBody BankAccount bankAccount) {
-        return userBankService.saveNewBankAccount(bankAccount);
+    public Card createBankAccount(@Valid @RequestBody BankAccount bankAccount, BindingResult bindingResult) {
+        return userBankService.saveNewBankAccount(bankAccount, bindingResult);
     }
 
     @DeleteMapping(value = "/account", consumes = "application/json")
     public String deleteBankAccount(@Valid @RequestBody BankAccount bankAccount, BindingResult bindingResult) {
-       userBankService.deleteBankAccount(bankAccount);
-       return "ok";
+        userBankService.deleteBankAccount(bankAccount, bindingResult);
+        return "Банковский аккаунт удален";
     }
 }

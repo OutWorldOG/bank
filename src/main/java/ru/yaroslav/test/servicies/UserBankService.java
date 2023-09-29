@@ -2,9 +2,12 @@ package ru.yaroslav.test.servicies;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import ru.yaroslav.test.dto.Card;
 import ru.yaroslav.test.dto.BankAccount;
 import ru.yaroslav.test.entities.UserBankEntity;
+import ru.yaroslav.test.exceptions_handling.user_bank_exception.IncorrectNameOrPinException;
+import ru.yaroslav.test.exceptions_handling.user_bank_exception.UserBankNotFound;
 import ru.yaroslav.test.repositories.UserBankRep;
 import utilities.CardMapper;
 
@@ -24,7 +27,10 @@ public class UserBankService {
     }
 
     @Transactional
-    public Card saveNewBankAccount(BankAccount bankAccount) {
+    public Card saveNewBankAccount(BankAccount bankAccount, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IncorrectNameOrPinException(bindingResult.getFieldErrors().toString());
+        }
         Optional<UserBankEntity> optionalBankUser = userBankRep.findBankUserEntitiesByName(bankAccount.getName());
         if (optionalBankUser.isPresent()) {
             UserBankEntity userBankEntity = optionalBankUser.get();
@@ -39,8 +45,13 @@ public class UserBankService {
     }
 
     @Transactional
-    public void deleteBankAccount(BankAccount bankAccount) {
+    public void deleteBankAccount(BankAccount bankAccount, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IncorrectNameOrPinException(bindingResult.getFieldErrors().toString());
+        }
         Optional<UserBankEntity> optionalBankUser = userBankRep.findBankUserEntitiesByName(bankAccount.getName());
-        optionalBankUser.ifPresent(userBankRep::delete);
+        if (optionalBankUser.isEmpty()) {
+            throw new UserBankNotFound("Аккаунт не найден");
+        }
     }
 }

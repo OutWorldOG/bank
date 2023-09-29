@@ -10,7 +10,6 @@ public class CardMapper {
         return Card.builder()
                 .cardNumber(userAccountEntity.getAccountNumber())
                 .pin(userAccountEntity.getPin())
-                .name(cardHolderName)
                 .build();
 
     }

@@ -23,10 +23,6 @@ public class UserBankEntity {
 
     @Override
     public String toString() {
-        return "UserBankEntity{" +
-                "user_id='" + user_id + '\'' +
-                ", name='" + name + '\'' +
-                ", userAccounts=" + userAccounts +
-                '}';
+        return "";
     }
 }

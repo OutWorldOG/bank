@@ -6,17 +6,20 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.yaroslav.test.entities.UserAccountEntity;
 
+import java.util.Optional;
+
 @Repository
 public interface UserAccountRep extends CrudRepository<UserAccountEntity, String> {
 
     @Modifying
-    @Query("delete FROM UserAccountEntity uae WHERE uae.account_id = ?1 and uae.pin=?2")
+    @Query("delete FROM UserAccountEntity uae WHERE uae.accountNumber = ?1 and uae.pin=?2")
     void deleteByAccount_numberAndPin(String account_number, String pin);
 
     @Modifying
     @Query("update UserAccountEntity uae set uae.money = ?2 where uae.accountNumber = ?1")
     void depositOrWithdraw(String account_number, Long money);
 
-    @Query("select uae from UserAccountEntity uae where uae.accountNumber=?2 and uae.pin=?1")
-    UserAccountEntity findByPinAndAccountId(String pin, String account_id);
+    @Query("select uae from UserAccountEntity uae where uae.accountNumber=?1")
+    Optional<UserAccountEntity> findByAccountNumber(String accountNumber);
+
 }

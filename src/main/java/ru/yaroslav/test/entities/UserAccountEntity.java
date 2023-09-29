@@ -1,10 +1,11 @@
 package ru.yaroslav.test.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserAccountEntity {
 
     @Id
-    private String account_id;
+    private String accountId;
 
     @Column(name = "pin")
     private String pin;
@@ -28,6 +29,9 @@ public class UserAccountEntity {
     @Column(name = "money")
     private Long money;
 
+    @OneToMany(mappedBy = "accountId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TransactionHistoryEntity> transactionHistoryEntities;
+
     @PrePersist
     public void setDefaults() {
         if (money == null) {
@@ -37,12 +41,6 @@ public class UserAccountEntity {
 
     @Override
     public String toString() {
-        return "UserAccountEntity{" +
-                "account_id='" + account_id + '\'' +
-                ", pin='" + pin + '\'' +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", userId=" + userId +
-                ", money=" + money +
-                '}';
+        return "";
     }
 }
