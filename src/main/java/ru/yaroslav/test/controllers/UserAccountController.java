@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yaroslav.test.dto.Card;
 import ru.yaroslav.test.servicies.UserAccountService;
 
-import java.sql.SQLException;
-
 @RestController
 @RequestMapping("/api/account")
 public class UserAccountController {

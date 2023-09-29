@@ -40,13 +40,13 @@ public class GlobalExceptionHandler {
     ResponseEntity<UserAccountCardIncorrectData> handleException(UserAccountNotFoundException exception) {
         UserAccountCardIncorrectData incorrectData = new UserAccountCardIncorrectData();
         incorrectData.setErrorMessage(exception.getMessage());
-        return new ResponseEntity<>(incorrectData, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(incorrectData, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     ResponseEntity<UserAccountCardIncorrectData> handleException(IncorrectTransferCardsException exception) {
         UserAccountCardIncorrectData incorrectData = new UserAccountCardIncorrectData();
         incorrectData.setErrorMessage(exception.getMessage());
-        return new ResponseEntity<>(incorrectData, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(incorrectData, HttpStatus.BAD_REQUEST);
     }
 }

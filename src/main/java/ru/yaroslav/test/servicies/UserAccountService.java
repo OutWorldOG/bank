@@ -85,6 +85,7 @@ public class UserAccountService {
 
     }
 
+
     private boolean compareCards(Card[] cards) {
         if (cards.length != 2) {
             return false;

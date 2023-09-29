@@ -5,11 +5,11 @@ import ru.yaroslav.test.entities.UserAccountEntity;
 
 public class CardMapper {
 
-    public static Card toCard(UserAccountEntity userAccountEntity, String cardHolderName) {
+    public static Card toCard(UserAccountEntity userAccountEntity) {
 
         return Card.builder()
                 .cardNumber(userAccountEntity.getAccountNumber())
-                .pin(userAccountEntity.getPin())
+                .amountOfMoney(userAccountEntity.getMoney())
                 .build();
 
     }

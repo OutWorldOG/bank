@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import ru.yaroslav.test.entities.UserAccountEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository

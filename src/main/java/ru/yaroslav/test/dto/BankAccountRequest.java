@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BankAccount implements Serializable {
+public class BankAccountRequest implements Serializable {
 
     @NotBlank(message = "Поле name не может быть пустым")
     @NotNull(message = "необходимо передать значение name")

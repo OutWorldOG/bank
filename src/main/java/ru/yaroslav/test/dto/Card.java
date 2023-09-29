@@ -1,5 +1,6 @@
 package ru.yaroslav.test.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -23,10 +24,10 @@ public class Card implements Serializable {
     @NotNull(message = "необходимо передать значение name")
     @Size(min = 4, max = 4)
     @Pattern(regexp = "^\\d+$", message = "pin должен состоять только из цифр")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String pin;
 
     @Min(value = 10)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     // @Pattern(regexp = "^\\d+$", message = "только положительные и цифры")
     private Long amountOfMoney;
 }
