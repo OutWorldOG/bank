@@ -1,5 +1,6 @@
 package ru.yaroslav.test.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,8 @@ public class TransactionHistoryEntity {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
-    private UserAccountEntity accountId;
+    @JsonIgnore
+    private UserCardEntity accountId;
 
     @Column(name = "date")
     private LocalDateTime date;
@@ -27,6 +29,5 @@ public class TransactionHistoryEntity {
 
     @Column(name = "amount")
     private Long amount;
-
 
 }

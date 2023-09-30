@@ -7,11 +7,11 @@ import ru.yaroslav.test.repositories.TransactionalHistoryRep;
 
 @Service
 @Transactional
-public class TransactionalHistoryService {
+public class TransactionHistoryService {
 
     private final TransactionalHistoryRep transactionalHistoryRep;
 
-    public TransactionalHistoryService(TransactionalHistoryRep transactionalHistoryRep) {
+    public TransactionHistoryService(TransactionalHistoryRep transactionalHistoryRep) {
         this.transactionalHistoryRep = transactionalHistoryRep;
     }
 

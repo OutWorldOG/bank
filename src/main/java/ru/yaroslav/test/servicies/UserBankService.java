@@ -6,17 +6,14 @@ import org.springframework.validation.BindingResult;
 import ru.yaroslav.test.dto.Card;
 import ru.yaroslav.test.dto.BankAccountRequest;
 import ru.yaroslav.test.dto.UserBankAccount;
-import ru.yaroslav.test.entities.UserAccountEntity;
+import ru.yaroslav.test.entities.UserCardEntity;
 import ru.yaroslav.test.entities.UserBankEntity;
 import ru.yaroslav.test.exceptions_handling.user_bank_exception.IncorrectNameOrPinException;
 import ru.yaroslav.test.exceptions_handling.user_bank_exception.UserBankNotFound;
 import ru.yaroslav.test.repositories.UserBankRep;
-import utilities.CardMapper;
+import ru.yaroslav.test.utilities.CardMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -36,16 +33,16 @@ public class UserBankService {
 
         if (optionalBankUser.isPresent()) {
             UserBankEntity userBankEntity = optionalBankUser.get();
-            UserAccountEntity userAccountEntity = userAccountService.saveNewUserAccount(bankAccountRequest.getPin(), userBankEntity);
-            return String.format("Номер вашей карты: %s", userAccountEntity.getAccountNumber());
+            UserCardEntity userCardEntity = userAccountService.saveNewUserAccount(bankAccountRequest.getPin(), userBankEntity);
+            return String.format("Номер вашей карты: %s", userCardEntity.getCardNumber());
 
         }
         UserBankEntity userBankEntity = new UserBankEntity();
         userBankEntity.setUser_id(UUID.randomUUID().toString());
         userBankEntity.setName(bankAccountRequest.getName());
         userBankRep.save(userBankEntity);
-        UserAccountEntity userAccountEntity = userAccountService.saveNewUserAccount(bankAccountRequest.getPin(), userBankEntity);
-        return String.format("Номер вашей карты: %s", userAccountEntity.getAccountNumber());
+        UserCardEntity userCardEntity = userAccountService.saveNewUserAccount(bankAccountRequest.getPin(), userBankEntity);
+        return String.format("Номер вашей карты: %s", userCardEntity.getCardNumber());
     }
 
     public void deleteBankAccount(BankAccountRequest bankAccountRequest, BindingResult bindingResult) {
@@ -57,21 +54,24 @@ public class UserBankService {
         userBankRep.delete(optionalBankUser.get());
     }
 
-    public UserBankAccount getUserBankAccount(String name, BindingResult bindingResult) {
-        Optional<UserBankEntity> optionalBankUser = checkForBindingResultNReturnEntity(bindingResult, "Yaroszlav");
+    public UserBankAccount getUserBankAccount(UserBankAccount userBankAccountRequest, BindingResult bindingResult) {
+        Optional<UserBankEntity> optionalBankUser = checkForBindingResultNReturnEntity(bindingResult, userBankAccountRequest.getName());
+
         if (optionalBankUser.isEmpty()) {
             throw new UserBankNotFound("Аккаунт не найден");
         }
+
         UserBankEntity userBankEntity = optionalBankUser.get();
-        List<UserAccountEntity> userAccountEntityList = userBankEntity.getUserAccounts();
+        List<UserCardEntity> userCardEntityList = userBankEntity.getUserAccounts();
         UserBankAccount userBankAccount = new UserBankAccount();
         List<Card> cards = new ArrayList<>();
-        if (!userAccountEntityList.isEmpty()) {
-            for (UserAccountEntity userAccountEntity : userAccountEntityList) {
-                cards.add(CardMapper.toCard(userAccountEntity));
+
+        if (!userCardEntityList.isEmpty()) {
+            for (UserCardEntity userCardEntity : userCardEntityList) {
+                cards.add(CardMapper.toCard(userCardEntity));
             }
         }
-        userBankAccount.setName(name);
+        userBankAccount.setName(userBankAccountRequest.getName());
         userBankAccount.setUserCards(cards);
         return userBankAccount;
     }

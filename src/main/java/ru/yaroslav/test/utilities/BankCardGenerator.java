@@ -1,4 +1,4 @@
-package utilities;
+package ru.yaroslav.test.utilities;
 
 import java.util.Random;
 

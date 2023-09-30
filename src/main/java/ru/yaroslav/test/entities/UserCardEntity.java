@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Table(name = "user_account")
-public class UserAccountEntity {
+public class UserCardEntity {
 
     @Id
     private String accountId;
@@ -20,7 +20,7 @@ public class UserAccountEntity {
     private String pin;
 
     @Column(name = "account_number")
-    private String accountNumber;
+    private String cardNumber;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

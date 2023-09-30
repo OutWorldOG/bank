@@ -19,7 +19,7 @@ public class UserBankEntity {
     private String name;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserAccountEntity> userAccounts;
+    private List<UserCardEntity> userAccounts;
 
     @Override
     public String toString() {

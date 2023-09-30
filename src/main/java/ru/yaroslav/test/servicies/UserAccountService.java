@@ -7,13 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import ru.yaroslav.test.dto.Card;
 import ru.yaroslav.test.entities.TransactionHistoryEntity;
-import ru.yaroslav.test.entities.UserAccountEntity;
+import ru.yaroslav.test.entities.UserCardEntity;
 import ru.yaroslav.test.entities.UserBankEntity;
-import ru.yaroslav.test.exceptions_handling.user_account_exception.IncorrectPinOrCardNumberException;
-import ru.yaroslav.test.exceptions_handling.user_account_exception.IncorrectTransferCardsException;
-import ru.yaroslav.test.exceptions_handling.user_account_exception.UserAccountNotFoundException;
-import ru.yaroslav.test.repositories.UserAccountRep;
-import utilities.BankCardGenerator;
+import ru.yaroslav.test.exceptions_handling.user_card_exception.IncorrectPinOrCardNumberException;
+import ru.yaroslav.test.exceptions_handling.user_card_exception.IncorrectTransferCardsException;
+import ru.yaroslav.test.exceptions_handling.user_card_exception.UserAccountNotFoundException;
+import ru.yaroslav.test.repositories.UserCardRep;
+import ru.yaroslav.test.utilities.BankCardGenerator;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -22,55 +22,55 @@ import java.util.*;
 @Transactional
 public class UserAccountService {
 
-    private final UserAccountRep userAccountRep;
+    private final UserCardRep userCardRep;
 
-    private final TransactionalHistoryService transactionalHistoryService;
+    private final TransactionHistoryService transactionHistoryService;
 
     private final PasswordEncoder allMightyEncoder;
 
     private final UserAccountService userAccountService;
 
-    public UserAccountService(UserAccountRep userAccountRep, TransactionalHistoryService transactionalHistoryService, PasswordEncoder allMightyEncoder, @Lazy UserAccountService userAccountService) {
-        this.transactionalHistoryService = transactionalHistoryService;
-        this.userAccountRep = userAccountRep;
+    public UserAccountService(UserCardRep userCardRep, TransactionHistoryService transactionHistoryService, PasswordEncoder allMightyEncoder, @Lazy UserAccountService userAccountService) {
+        this.transactionHistoryService = transactionHistoryService;
+        this.userCardRep = userCardRep;
         this.allMightyEncoder = allMightyEncoder;
         this.userAccountService = userAccountService;
     }
 
-    public UserAccountEntity saveNewUserAccount(String pin, UserBankEntity userBankEntity) {
-        UserAccountEntity userAccountEntity = new UserAccountEntity();
-        userAccountEntity.setUserId(userBankEntity);
-        userAccountEntity.setAccountId(UUID.randomUUID().toString());
-        userAccountEntity.setPin(allMightyEncoder.encode(pin));
-        userAccountEntity.setAccountNumber(BankCardGenerator.generateUniqueBankCardNumber());
-        userAccountRep.save(userAccountEntity);
-        return userAccountEntity;
+    public UserCardEntity saveNewUserAccount(String pin, UserBankEntity userBankEntity) {
+        UserCardEntity userCardEntity = new UserCardEntity();
+        userCardEntity.setUserId(userBankEntity);
+        userCardEntity.setAccountId(UUID.randomUUID().toString());
+        userCardEntity.setPin(allMightyEncoder.encode(pin));
+        userCardEntity.setCardNumber(BankCardGenerator.generateUniqueBankCardNumber());
+        userCardRep.save(userCardEntity);
+        return userCardEntity;
     }
 
     public void deleteUserAccountCard(Card card, BindingResult bindingResult) {
-        UserAccountEntity userAccountEntity = checkForErrorsNReturnEntity(bindingResult, card);
+        UserCardEntity userCardEntity = checkForErrorsNReturnEntity(bindingResult, card);
 
-        userAccountRep.delete(userAccountEntity);
+        userCardRep.delete(userCardEntity);
     }
 
     public String deposit(Card card, BindingResult bindingResult) {
-        UserAccountEntity userAccountEntity = checkForErrorsNReturnEntity(bindingResult, card);
+        UserCardEntity userCardEntity = checkForErrorsNReturnEntity(bindingResult, card);
 
-        Long OperationResult = card.getAmountOfMoney() + userAccountEntity.getMoney();
-        userAccountRep.depositOrWithdraw(card.getCardNumber(), OperationResult);
-        transactionalHistoryService.save(createTransaction("deposit", userAccountEntity, card));
+        Long OperationResult = card.getAmountOfMoney() + userCardEntity.getMoney();
+        userCardRep.depositOrWithdraw(card.getCardNumber(), OperationResult);
+        transactionHistoryService.save(createTransaction("deposit", userCardEntity, card));
         return String.format("Вы занесли %s, текущий баланс: %s", card.getAmountOfMoney(), OperationResult);
     }
 
     public String withdraw(Card card, BindingResult bindingResult) {
-        UserAccountEntity userAccountEntity = checkForErrorsNReturnEntity(bindingResult, card);
+        UserCardEntity userCardEntity = checkForErrorsNReturnEntity(bindingResult, card);
 
-        Long operationResult = userAccountEntity.getMoney() - card.getAmountOfMoney();
+        Long operationResult = userCardEntity.getMoney() - card.getAmountOfMoney();
         if (Long.signum(operationResult) == -1) {
             throw new UserAccountNotFoundException("Недостаточно средств");
         }
-        userAccountRep.depositOrWithdraw(userAccountEntity.getAccountNumber(), operationResult);
-        transactionalHistoryService.save(createTransaction("withdraw", userAccountEntity, card));
+        userCardRep.depositOrWithdraw(userCardEntity.getCardNumber(), operationResult);
+        transactionHistoryService.save(createTransaction("withdraw", userCardEntity, card));
         return String.format("Вы сняли %s, текущий баланс: %s", card.getAmountOfMoney(), operationResult);
     }
 
@@ -85,6 +85,11 @@ public class UserAccountService {
 
     }
 
+    public List<TransactionHistoryEntity> getAllTransactions(Card card, BindingResult bindingResult) {
+        UserCardEntity userCardEntity = checkForErrorsNReturnEntity(bindingResult, card);
+        return userCardEntity.getTransactionHistoryEntities();
+    }
+
 
     private boolean compareCards(Card[] cards) {
         if (cards.length != 2) {
@@ -96,30 +101,30 @@ public class UserAccountService {
         return !cards[0].getCardNumber().equals(cards[1].getCardNumber());
     }
 
-    private TransactionHistoryEntity createTransaction(String operation, UserAccountEntity userAccountEntity, Card card) {
+    private TransactionHistoryEntity createTransaction(String operation, UserCardEntity userCardEntity, Card card) {
         TransactionHistoryEntity transactionHistoryEntity = new TransactionHistoryEntity();
         transactionHistoryEntity.setHistoryId(UUID.randomUUID().toString());
         transactionHistoryEntity.setDate(LocalDateTime.now());
         transactionHistoryEntity.setOperationType(operation);
-        transactionHistoryEntity.setAccountId(userAccountEntity);
+        transactionHistoryEntity.setAccountId(userCardEntity);
         transactionHistoryEntity.setAmount(card.getAmountOfMoney());
         return transactionHistoryEntity;
     }
 
-    private UserAccountEntity checkForErrorsNReturnEntity(BindingResult bindingResult, Card card) {
+    private UserCardEntity checkForErrorsNReturnEntity(BindingResult bindingResult, Card card) {
         if (bindingResult.hasErrors()) {
             throw new IncorrectPinOrCardNumberException(bindingResult.getFieldErrors().toString());
         }
-        Optional<UserAccountEntity> optionalUserAccountEntity = userAccountRep.findByAccountNumber(card.getCardNumber());
+        Optional<UserCardEntity> optionalUserAccountEntity = userCardRep.findByAccountNumber(card.getCardNumber());
 
         if (optionalUserAccountEntity.isEmpty()) {
             throw new UserAccountNotFoundException("карта не найдена");
         }
 
-        UserAccountEntity userAccountEntity = optionalUserAccountEntity.get();
-        if (!allMightyEncoder.matches(card.getPin(), userAccountEntity.getPin())) {
+        UserCardEntity userCardEntity = optionalUserAccountEntity.get();
+        if (!allMightyEncoder.matches(card.getPin(), userCardEntity.getPin())) {
             throw new UserAccountNotFoundException("введён неверный pin");
         }
-        return userAccountEntity;
+        return userCardEntity;
     }
 }
