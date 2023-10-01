@@ -3,17 +3,16 @@ package ru.yaroslav.test.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import java.io.Serializable;
 
-@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Card implements Serializable {
+@SuperBuilder
+public class Card {
 
     @NotBlank(message = "cant be blank")
     @NotNull(message = "cant be null")
@@ -27,7 +26,4 @@ public class Card implements Serializable {
     @Pattern(regexp = "^\\d+$", message = "pin должен состоять только из цифр")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String pin;
-
-    @Min(value = 10)
-    private Long amountOfMoney;
 }

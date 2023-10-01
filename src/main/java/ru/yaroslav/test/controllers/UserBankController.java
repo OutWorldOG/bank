@@ -10,39 +10,44 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.yaroslav.test.dto.BankAccountRequest;
 import ru.yaroslav.test.dto.UserBankAccount;
-import ru.yaroslav.test.servicies.UserBankService;
+import ru.yaroslav.test.servicies.UserBankServiceImpl;
 
 @RestController
-@RequestMapping("/api/bank")
+@RequestMapping("/api/v1/bank")
 public class UserBankController {
 
-    private final UserBankService userBankService;
+    private final UserBankServiceImpl userBankServiceImpl;
 
-    public UserBankController(UserBankService userBankService) {
-        this.userBankService = userBankService;
+    public UserBankController(UserBankServiceImpl userBankServiceImpl) {
+        this.userBankServiceImpl = userBankServiceImpl;
     }
-    @Operation(summary = "create user bank account and card")
+    @Operation(summary = "create user bank account and card",
+            description = "method creates bank account and card. In case bank account already exists," +
+            " creates just card number. Returns card number. Accepts name and pin")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "create user bank account or/and card", content = { @Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "200",
+                    description = "create user bank account or/and card", content = { @Content(mediaType = "application/json",
                     schema = @Schema(implementation = String.class, example = "Номер вашей карты: 4032261128477751")) }),
             @ApiResponse(responseCode = "400", description = "bad request data", content = { @Content(mediaType = "application/json",
                     schema = @Schema(implementation = String.class, example = "Поле name не может быть пустым")) })})
     @PostMapping(value = "/account", consumes = "application/json")
-    public String createBankAccount(@Valid @RequestBody BankAccountRequest bankAccountRequest, BindingResult bindingResult) {
-        return userBankService.saveNewBankAccount(bankAccountRequest, bindingResult);
+    public String createUserBankAccount(@Valid @RequestBody BankAccountRequest bankAccountRequest, BindingResult bindingResult) {
+        return userBankServiceImpl.saveNewUserBankAccount(bankAccountRequest, bindingResult);
     }
-    @Operation(summary = "delete bank account")
+    @Operation(summary = "delete bank account",
+            description = "method deletes user bank account. Requires just username")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "create user bank account or/and card", content = { @Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "200", description = "delete user bank account", content = { @Content(mediaType = "application/json",
                     schema = @Schema(implementation = String.class, example = "Банковский аккаунт удален")) }),
             @ApiResponse(responseCode = "400", description = "bad request data", content = { @Content(mediaType = "application/json",
                     schema = @Schema(implementation = String.class, example = "Поле name не может быть пустым")) })})
     @DeleteMapping(value = "/account", consumes = "application/json")
-    public String deleteBankAccount(@Valid @RequestBody BankAccountRequest bankAccountRequest, BindingResult bindingResult) {
-        userBankService.deleteBankAccount(bankAccountRequest, bindingResult);
+    public String deleteUserBankAccount(@Valid @RequestBody UserBankAccount bankAccount, BindingResult bindingResult) {
+        userBankServiceImpl.deleteUserBankAccount(bankAccount, bindingResult);
         return "Банковский аккаунт удален";
     }
-    @Operation(summary = "get all user accounts")
+    @Operation(summary = "get all user cards",
+            description = "returns all cards associated with bank account. Accepts just username")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "create user bank account or/and card", content = { @Content(mediaType = "application/json",
                     schema = @Schema(implementation = UserBankAccount.class)) }),
@@ -50,6 +55,6 @@ public class UserBankController {
                     schema = @Schema(implementation = String.class, example = "Поле name не может быть пустым")) })})
     @PostMapping(value = "/accounts", consumes = "application/json")
     public UserBankAccount getUserBankAccount(@Valid @RequestBody UserBankAccount userBankAccount, BindingResult bindingResult) {
-        return userBankService.getUserBankAccount(userBankAccount, bindingResult);
+        return userBankServiceImpl.getUserBankAccount(userBankAccount, bindingResult);
     }
 }

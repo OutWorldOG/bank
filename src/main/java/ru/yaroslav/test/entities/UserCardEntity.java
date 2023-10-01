@@ -24,12 +24,12 @@ public class UserCardEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserBankEntity userId;
+    private UserBankAccountEntity userId;
 
     @Column(name = "money")
     private Long money;
 
-    @OneToMany(mappedBy = "accountId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cardId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionHistoryEntity> transactionHistoryEntities;
 
     @PrePersist

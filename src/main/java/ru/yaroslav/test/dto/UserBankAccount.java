@@ -1,5 +1,6 @@
 package ru.yaroslav.test.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,5 +20,6 @@ public class UserBankAccount {
     @Size(min = 3, max = 36)
     private String name;
 
-    private List<Card> userCards;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<CardTransaction> userCardTransactions;
 }

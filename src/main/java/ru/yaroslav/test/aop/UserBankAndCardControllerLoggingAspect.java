@@ -11,7 +11,7 @@ import java.util.Arrays;
 @Aspect
 @Component
 @Slf4j
-public class UserBankAndAccountControllerLoggingAspect {
+public class UserBankAndCardControllerLoggingAspect {
 
     @Pointcut("within(ru.yaroslav.test.controllers.*)")
     public void userBankControllerPointcut() {

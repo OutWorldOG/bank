@@ -19,7 +19,7 @@ public class TransactionHistoryEntity {
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnore
-    private UserCardEntity accountId;
+    private UserCardEntity cardId;
 
     @Column(name = "date")
     private LocalDateTime date;
