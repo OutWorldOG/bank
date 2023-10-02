@@ -34,23 +34,4 @@ public class BankCardGenerator {
 
         return sum % 10 == 0;
     }
-
-    private static int calculateChecksum(String cardNumber) {
-        int sum = 0;
-        boolean doubleDigit = false;
-
-        for (int i = cardNumber.length() - 2; i >= 0; i--) {
-            int digit = Character.getNumericValue(cardNumber.charAt(i));
-            if (doubleDigit) {
-                digit *= 2;
-                if (digit > 9) {
-                    digit -= 9;
-                }
-            }
-            sum += digit;
-            doubleDigit = !doubleDigit;
-        }
-
-        return (10 - (sum % 10)) % 10;
-    }
 }
