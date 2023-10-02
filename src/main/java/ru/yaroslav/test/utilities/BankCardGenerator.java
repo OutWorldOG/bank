@@ -31,7 +31,6 @@ public class BankCardGenerator {
         for (int i = cardNumber.length() - 1; i >= 0; i -= 2) {
             sum += Character.getNumericValue(cardNumber.charAt(i));
         }
-
         return sum % 10 == 0;
     }
 }

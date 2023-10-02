@@ -20,5 +20,5 @@ public interface UserCardService {
 
     void transfer(CardTransaction[] cardTransactions, BindingResult bindingResult);
 
-    List<TransactionHistoryEntity> getAllTransactions(CardTransaction cardTransaction, BindingResult bindingResult);
+    List<TransactionHistoryEntity> getAllTransactions(Card cardTransaction, BindingResult bindingResult);
 }

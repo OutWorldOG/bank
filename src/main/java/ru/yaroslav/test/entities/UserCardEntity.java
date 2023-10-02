@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "user_account")
+@Table(name = "user_card")
 public class UserCardEntity {
 
     @Id

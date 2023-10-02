@@ -17,7 +17,7 @@ public class TransactionHistoryEntity {
     private String historyId;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "card_id")
     @JsonIgnore
     private UserCardEntity cardId;
 

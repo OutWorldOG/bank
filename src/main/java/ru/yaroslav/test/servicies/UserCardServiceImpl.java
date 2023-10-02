@@ -86,8 +86,8 @@ public class UserCardServiceImpl implements UserCardService {
 
     }
 
-    public List<TransactionHistoryEntity> getAllTransactions(CardTransaction cardTransaction, BindingResult bindingResult) {
-        UserCardEntity userCardEntity = checkForErrorsNReturnEntity(bindingResult, cardTransaction);
+    public List<TransactionHistoryEntity> getAllTransactions(Card card, BindingResult bindingResult) {
+        UserCardEntity userCardEntity = checkForErrorsNReturnEntity(bindingResult, card);
         return userCardEntity.getTransactionHistoryEntities();
     }
 
